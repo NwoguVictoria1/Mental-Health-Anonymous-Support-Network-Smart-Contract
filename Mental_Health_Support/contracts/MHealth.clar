@@ -114,3 +114,25 @@
   )
 )
 
+
+;; Supporter Rating System
+(define-public (rate-support-interaction 
+  (request-id uint)
+  (rating uint)
+  (feedback (string-ascii 200))
+)
+  (let 
+    (
+      (request (unwrap! (map-get? SupportRequests request-id) ERR-SUPPORT-REQUEST-NOT-FOUND))
+      (assigned-supporter (unwrap! (get assigned-supporter request) (err u111)))
+    )
+    ;; Validate rating
+    (asserts! (and (>= rating u1) (<= rating u5)) ERR-INVALID-RATING)
+    (asserts! (not (is-eq tx-sender assigned-supporter)) ERR-CANNOT-RATE-SELF)
+
+
+ ;; Prevent multiple ratings
+    (asserts! 
+      (is-none (map-get? SupportInteractionRatings {request-id: request-id, rater: tx-sender})) 
+      ERR-ALREADY-RATED
+    )
