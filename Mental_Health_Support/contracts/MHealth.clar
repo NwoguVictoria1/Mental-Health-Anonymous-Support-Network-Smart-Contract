@@ -40,3 +40,12 @@
     interaction-logs: (list 10 (string-ascii 100))
   }
 )
+
+;; Support Interaction Ratings
+(define-map SupportInteractionRatings
+  {request-id: uint, rater: principal}
+  {
+    rating: uint,
+    feedback: (string-ascii 200)
+  }
+)
