@@ -49,3 +49,9 @@
     feedback: (string-ascii 200)
   }
 )
+
+;; Global counters and variables
+(define-data-var total-members uint u0)
+(define-data-var support-request-counter uint u0)
+(define-data-var emergency-support-fund uint u1000) ;; Initial emergency fund
+
