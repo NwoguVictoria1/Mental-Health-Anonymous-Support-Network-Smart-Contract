@@ -55,3 +55,25 @@
 (define-data-var support-request-counter uint u0)
 (define-data-var emergency-support-fund uint u1000) ;; Initial emergency fund
 
+;; New Function: Add Specialization
+(define-public (add-specialization 
+  (specialization (string-ascii 50))
+)
+  (let 
+    (
+      (current-member (unwrap! (map-get? Members tx-sender) ERR-NOT-MEMBER))
+      (current-specializations (get specializations current-member))
+    )
+    (asserts! (get is-verified current-member) ERR-UNAUTHORIZED)
+    (asserts! (< (len current-specializations) u5) (err u108)) ;; Max 5 specializations
+    
+    (map-set Members 
+      tx-sender 
+      (merge current-member { 
+        specializations: (unwrap! (as-max-len? (append current-specializations specialization) u5) (err u109))
+      })
+    )
+    (ok true)
+  )
+)
+
