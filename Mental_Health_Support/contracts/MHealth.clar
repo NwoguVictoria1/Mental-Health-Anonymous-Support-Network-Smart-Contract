@@ -167,3 +167,13 @@
   )
 )
 
+
+;;  Community Support Fund Contribution
+(define-public (contribute-to-emergency-fund (amount uint))
+  (begin
+    (try! (stx-transfer? amount tx-sender CONTRACT-OWNER))
+    (var-set emergency-support-fund (+ (var-get emergency-support-fund) amount))
+    (ok true)
+  )
+)
+
