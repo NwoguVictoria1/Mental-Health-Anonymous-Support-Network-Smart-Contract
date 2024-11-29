@@ -55,7 +55,7 @@
 (define-data-var support-request-counter uint u0)
 (define-data-var emergency-support-fund uint u1000) ;; Initial emergency fund
 
-;; New Function: Add Specialization
+;; Add Specialization
 (define-public (add-specialization 
   (specialization (string-ascii 50))
 )
@@ -76,4 +76,33 @@
     (ok true)
   )
 )
+
+
+;; Emergency Support Request
+(define-public (create-emergency-support-request 
+  (request-type (string-ascii 50))
+)
+  (let 
+    (
+      (request-id (var-get support-request-counter))
+      (member (unwrap! (map-get? Members tx-sender) ERR-NOT-MEMBER))
+      (emergency-fund (var-get emergency-support-fund))
+    )
+    (asserts! (get is-verified member) ERR-UNAUTHORIZED)
+    
+    ;; Check if emergency fund is sufficient
+    (asserts! (> emergency-fund u0) (err u110))
+    
+    (map-set SupportRequests 
+      request-id 
+      {
+        requester: tx-sender,
+        request-type: request-type,
+        anonymity-level: u3, ;; Highest anonymity
+        status: "EMERGENCY_PENDING",
+        assigned-supporter: none,
+        emergency-flag: true,
+        interaction-logs: (list)
+      }
+    )
 
