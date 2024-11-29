@@ -26,3 +26,17 @@
   }
 )
 
+
+;; Support Requests
+(define-map SupportRequests
+  uint
+  {
+    requester: principal,
+    request-type: (string-ascii 50),
+    anonymity-level: uint,
+    status: (string-ascii 20),
+    assigned-supporter: (optional principal),
+    emergency-flag: bool,
+    interaction-logs: (list 10 (string-ascii 100))
+  }
+)
