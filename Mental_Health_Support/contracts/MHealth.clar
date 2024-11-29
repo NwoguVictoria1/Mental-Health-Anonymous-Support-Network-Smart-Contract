@@ -10,3 +10,19 @@
 (define-constant ERR-INVALID-RATING (err u105))
 (define-constant ERR-CANNOT-RATE-SELF (err u106))
 (define-constant ERR-ALREADY-RATED (err u107))
+
+
+;; Member Storage
+(define-map Members
+  principal
+  {
+    is-verified: bool,
+    support-credits: uint,
+    total-contributions: uint,
+    support-ratings: (list 10 uint),
+    average-rating: uint,
+    specializations: (list 5 (string-ascii 50)),
+    last-active: uint
+  }
+)
+
