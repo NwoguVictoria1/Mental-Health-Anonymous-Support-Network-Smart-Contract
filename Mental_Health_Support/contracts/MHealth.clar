@@ -193,3 +193,19 @@
   )
 )
 
+
+;; Comprehensive Network Statistics
+(define-read-only (get-comprehensive-network-stats)
+  {
+    total-members: (var-get total-members),
+    total-support-requests: (var-get support-request-counter),
+    emergency-fund-balance: (var-get emergency-support-fund),
+    top-supporters: (take 
+      (sort-by 
+        (map-values Members) 
+        (lambda (a b) (> (get total-contributions a) (get total-contributions b)))
+      ) 
+      u5
+    )
+  }
+)
