@@ -114,7 +114,6 @@
   )
 )
 
-
 ;; Supporter Rating System
 (define-public (rate-support-interaction 
   (request-id uint)
@@ -126,13 +125,45 @@
       (request (unwrap! (map-get? SupportRequests request-id) ERR-SUPPORT-REQUEST-NOT-FOUND))
       (assigned-supporter (unwrap! (get assigned-supporter request) (err u111)))
     )
-    ;; Validate rating
+
+;; Validate rating
     (asserts! (and (>= rating u1) (<= rating u5)) ERR-INVALID-RATING)
     (asserts! (not (is-eq tx-sender assigned-supporter)) ERR-CANNOT-RATE-SELF)
 
 
- ;; Prevent multiple ratings
+;; Prevent multiple ratings
     (asserts! 
       (is-none (map-get? SupportInteractionRatings {request-id: request-id, rater: tx-sender})) 
       ERR-ALREADY-RATED
     )
+
+;; Store rating
+    (map-set SupportInteractionRatings 
+      {request-id: request-id, rater: tx-sender}
+      {
+        rating: rating,
+        feedback: feedback
+      }
+    )
+
+;; Update supporter's average rating
+    (let 
+      (
+        (supporter-data (unwrap! (map-get? Members assigned-supporter) ERR-NOT-MEMBER))
+        (current-ratings (get support-ratings supporter-data))
+        (updated-ratings (unwrap! (as-max-len? (append current-ratings rating) u10) (err u112)))
+        (new-avg-rating (/ (fold + updated-ratings u0) (len updated-ratings)))
+      )
+      (map-set Members 
+        assigned-supporter 
+        (merge supporter-data { 
+          support-ratings: updated-ratings,
+          average-rating: new-avg-rating
+        })
+      )
+    )
+    
+    (ok true)
+  )
+)
+
