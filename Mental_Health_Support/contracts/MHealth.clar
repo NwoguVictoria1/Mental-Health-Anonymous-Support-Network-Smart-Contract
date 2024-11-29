@@ -177,3 +177,19 @@
   )
 )
 
+
+;; View Potential Supporters
+(define-read-only (find-potential-supporters 
+  (request-type (string-ascii 50))
+)
+  (filter 
+    (lambda (member) 
+      (and 
+        (get is-verified member)
+        (contains request-type (get specializations member))
+      )
+    )
+    (map-values Members)
+  )
+)
+
