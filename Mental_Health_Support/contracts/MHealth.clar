@@ -106,3 +106,11 @@
       }
     )
 
+
+ ;; Reduce emergency fund
+    (var-set emergency-support-fund (- emergency-fund u100))
+    (var-set support-request-counter (+ request-id u1))
+    (ok request-id)
+  )
+)
+
